@@ -1,0 +1,23 @@
+import 'package:bloc/bloc.dart';
+import 'package:flutter_app_pp/data/datasources/auth_remote_sources.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'logout_event.dart';
+part 'logout_state.dart';
+part 'logout_bloc.freezed.dart';
+
+class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
+  final AuthRemoteSources _authRemoteSources;
+  LogoutBloc(
+    this._authRemoteSources,
+  ) : super(const _Initial()) {
+    on<_Logout>((event, emit) async {
+      emit(const _Loading());
+      final result = await _authRemoteSources.logout();
+      result.fold(
+        (l) => emit(_Error(l)),
+        (r) => emit(const _Success()),
+      );
+    });
+  }
+}
